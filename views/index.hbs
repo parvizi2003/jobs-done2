@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="index-styles.css">
+
+<header class="header">
+    <div class="wrapper">
+        <div class="username">{{username}}</div>
+        <div class="header_actions">
+            <a href="/changePassword" class="change-password">CHANGE PASSWORD</a>
+            <a href="/logout" class="logout">LOGOUT</a>
+        </div>
+    </div>
+</header>
+
+<div class="wrapper">
+    <form action="/" method="post" class="index-from">
+        <input type="text" class="form-control" placeholder="JOB NAME" name="job_name">
+        <input type="text" class="form-control" placeholder="DONE DATE" name="done_date">
+        <input type="text" class="form-control" placeholder="TIME TO FINISH" name="time_to_finish">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <table class="table table-striped-columns ">
+        <thead>
+            <tr>
+                <th scope="col">JOB NAME</th>
+                <th scope="col">DONE DATE</th>
+                <th scope="col">TIME OT FINISH</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#each table}}
+            <tr>
+                {{#each .}}
+                    <td>{{.}}</td>
+                {{/each}}     
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="form-styles.css">
+
+<div class="wrapper">
+    <form action="/login" method="post" class="login-form">
+        <div class="mb-3">
+            <label for="username" class="form-label">LOGIN</label>
+            <input type="text" class="form-control" id="username" name="username">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">PASSWORD</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        {{#if show}}
+            <div class="form-text">Wrong username or password</div>	
+        {{/if}}
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="/registration">CREATE ACCOUNT</a>
+    </form>
+</div>

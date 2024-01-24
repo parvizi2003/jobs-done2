@@ -1,0 +1,55 @@
+.wrapper {
+    width: 1080px;
+    margin: 0 auto;
+}
+
+.header {
+    height: 50px;
+    background: #ebebeb;
+    margin-bottom: 20px;
+}
+
+.header .wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.username {
+    height: 100%;
+    padding: 0 20px;
+    line-height: 50px;
+    background: #727272;
+    color: #fff;
+}
+
+.header_actions {
+    height: 100%;
+    display: flex;
+}
+
+.change-password, .logout {
+    display: block;
+    height: 100%;
+    padding: 0 20px;
+    margin-left: 10px;
+    line-height: 50px;
+    color: #fff;
+    text-decoration: none;
+    background: #646464;
+}
+
+.index-from {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.form-control, .btn {
+    width: 24%;
+}
+
+.table {
+    border: 1px solid #242424;
+}

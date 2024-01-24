@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="form-styles.css">
+
+<div class="wrapper">
+    <form action="/registration" method="post" class="login-form">
+        <div class="mb-3">
+            <label for="username" class="form-label">ENTER USERNAME</label>
+            <input type="text" class="form-control" id="username" name="username">
+        </div> 
+        <div class="mb-3">
+            <label for="password" class="form-label">ENTER PASSWORD</label>
+            <input type="password" class="form-control" id="password" name="password1">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">CONFIRM PASSWORD</label>
+            <input type="password" class="form-control" id="password" name="password2">
+        </div>
+        {{#if show}}
+            <div class="form-text">CHANGE USERNAME OR MATCH PASSWORDS</div>	
+        {{/if}}
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="/login">ALREADY HAVE ACCOUNT?</a>
+    </form>
+</div>
