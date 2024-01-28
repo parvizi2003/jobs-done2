@@ -20,9 +20,21 @@
     <table class="table table-striped-columns ">
         <thead>
             <tr>
-                <th scope="col">JOB NAME</th>
-                <th scope="col">DONE DATE</th>
-                <th scope="col">TIME OT FINISH</th>
+                {{#if show}}
+                    <th scope="col" class="users">
+                        <span class="users_username">USER NAME</span>
+                        <ul class="users_list">
+                            {{#each users}}
+                                {{#each .}}
+                                    <li><a href="user/{{.}}">{{.}}</a></li>
+                                {{/each}}
+                            {{/each}}
+                        </ul>
+                    </th>
+                {{/if}} 
+                <th scope="col"><a href="order-by/job_name">JOB NAME</a></th>
+                <th scope="col"><a href="order-by/done_date" class="mid">DONE DATE</a></th>
+                <th scope="col"><a href="order-by/time_to_finish">TIME OT FINISH</a></th>
             </tr>
         </thead>
         <tbody>
