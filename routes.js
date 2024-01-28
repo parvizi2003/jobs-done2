@@ -5,10 +5,10 @@ const router = new Router();
 
 router.get('/', async (req, res) => {
     if (req.session.userID) {
-        let users = (await db.query(`SELECT * FROM jobs_id_${req.session.userID}`)).rows;
+        let table = (await db.query(`SELECT job_name, done_date, time_to_finish FROM jobs WHERE user_id = ${req.session.userID}`)).rows;
         res.render('index', {
             username: req.session.username,
-            table: users
+            table: table
         })
     } else {
         res.redirect('/login');
@@ -17,9 +17,9 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     await db.query(`
-    INSERT INTO jobs_id_${req.session.userID} (job_name, done_date, time_to_finish) 
-    VALUES ($1, $2, $3) RETURNING *`,
-    [req.body.job_name, req.body.done_date, req.body.time_to_finish])
+    INSERT INTO jobs (user_id, job_name, done_date, time_to_finish) 
+    VALUES ($1, $2, $3, $4) RETURNING *`,
+    [req.session.userID, req.body.job_name, req.body.done_date, req.body.time_to_finish])
     res.redirect('/')
 })
 
@@ -46,13 +46,6 @@ router.post('/registration', async (req, res) => {
     if (req.body.password1 == req.body.password2 && await isTaken(req.body.username) == false) {
         await db.query('INSERT INTO users (user_name, user_password) VALUES ($1, $2) RETURNING *', [req.body.username, req.body.password1]);
         let userID = (await db.query('SELECT user_id FROM users WHERE user_name = $1', [req.body.username])).rows[0].user_id;
-        await db.query(`
-            CREATE TABLE jobs_id_${userID}(
-                job_name varchar(255) NOT NULL,
-                done_date date NOT NULL,
-                time_to_finish int NOT NULL
-            )
-        `)
         req.session.userID = userID;
         req.session.username = req.body.username;
         res.redirect('/');
@@ -88,13 +81,11 @@ router.post('/changePassword', async (req, res) => {
     }
 })
 
-async function isTaken(str) {
-    let users = await db.query('SELECT * FROM users');
-    for (let user of users.rows) {
-        if (str == user.user_name) {
-            return true
-        }
-    }
+async function isTaken(username) {
+    let user = await db.query('SELECT user_name FROM users WHERE user_name = $1', [username])
+    if (username) {
+        return true
+    } 
     return false
 }
 export default router;
