@@ -116,10 +116,7 @@ router.get('/user/:user', (req, res) => {
 })
 
 async function isTaken(username) {
-    let user = await db.query('SELECT user_name FROM users WHERE user_name = $1', [username])
-    if (username) {
-        return true
-    } 
-    return false
+    let user = await (await db.query('SELECT user_name FROM users WHERE user_name = $1', [username])).rows[0]; 
+    return user ? true : false
 }
 export default router;
