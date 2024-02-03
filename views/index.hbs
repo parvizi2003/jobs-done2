@@ -11,30 +11,43 @@
 </header>
 
 <div class="wrapper">
-    <form action="/" method="post" class="index-from">
+    <form action="/" method="post" class="index-form">
         <input type="text" class="form-control" placeholder="JOB NAME" name="job_name">
         <input type="text" class="form-control" placeholder="DONE DATE" name="done_date">
         <input type="text" class="form-control" placeholder="TIME TO FINISH" name="time_to_finish">
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <div class="show-err"></div>
     <table class="table table-striped-columns ">
         <thead>
             <tr>
-                {{#if show}}
-                    <th scope="col" class="users">
-                        <span class="users_username">USER NAME</span>
-                        <ul class="users_list">
-                            {{#each users}}
-                                {{#each .}}
-                                    <li><a href="user/{{.}}">{{.}}</a></li>
+                <form action="/sort" method="post" class="sort-form">
+                    <th scope="col">
+                        {{#if show}}
+                            <select name="select_user" id="select_user" class="table_select">
+                                {{#each users}}
+                                    <option value="{{user_id}}">{{user_name}}</option>
                                 {{/each}}
-                            {{/each}}
-                        </ul>
+                            </select>
+                        {{/if}}
                     </th>
-                {{/if}} 
-                <th scope="col"><a href="order-by/job_name">JOB NAME</a></th>
-                <th scope="col"><a href="order-by/done_date" class="mid">DONE DATE</a></th>
-                <th scope="col"><a href="order-by/time_to_finish">TIME OT FINISH</a></th>
+                    <th scope="col">
+                        <select name="select_order" id="select_order" class="table_select">
+                            <option value="0">JOB_NAME</option>
+                            <option value="1">DONE DATE</option>
+                            <option value="2">TIME TO FINISH</option>
+                        </select>
+                    </th>
+                    <th scope="col">
+                        <input type="submit" value="SUBMIT" class="table_select">
+                    </th>
+                </form>
+            </tr>
+            <tr>
+        
+                <th scope="col">JOB NAME</th>
+                <th scope="col">DONE DATE</th>
+                <th scope="col">TIME OT FINISH</th>
             </tr>
         </thead>
         <tbody>
@@ -42,9 +55,31 @@
             <tr>
                 {{#each .}}
                     <td>{{.}}</td>
-                {{/each}}     
+                {{/each}}
             </tr>
         {{/each}}
         </tbody>
     </table>
 </div>
+
+<script src="index.js"></script>
+<script>
+    let selectUser = document.querySelector('#select_user');
+    let selectOrder = document.querySelector('#select_order');
+
+    let userOps = selectUser.querySelectorAll('option');
+    let orderOps = selectOrder.querySelectorAll('option');
+
+    for (let op of userOps) {
+        if(op.value == {{orderByUser}}) {
+            op.selected = true
+        }
+    }
+
+    for (let op of orderOps) {
+        if(op.value == {{order}}) {
+            op.selected = true
+        }
+    }
+
+</script>

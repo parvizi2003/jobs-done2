@@ -5,33 +5,29 @@ const router = new Router();
 
 router.get('/', async (req, res) => {
     if (req.session.userID) {
-        if(req.session.username == 'admin') {
-            let table = (await db.query(`
-            SELECT user_name, job_name, done_date, time_to_finish 
-            FROM jobs
-            JOIN users USING (user_id)
-            WHERE user_name = $1
-            ORDER BY ${req.session.order}
-            `, [req.session.orderByUser])).rows;
-            let users = (await db.query('SELECT user_name FROM users')).rows
-            res.render('index', {
-                title: 'Jobs-Done',
-                username: req.session.username,
-                table: table,
-                show: true,
-                users: users
-            })
-            return
-        } 
-        console.log(req.session.order)
-        let table = (await db.query(`SELECT job_name, done_date, time_to_finish 
-            FROM jobs WHERE user_id = $1 
-            ORDER BY ${req.session.order}`, [req.session.userID])).rows;
+        let orderBycolumn = ['job_name', 'done_date', 'time_to_finish'][req.session.order]
+        let table = (await db.query(`
+        SELECT job_name, done_date, time_to_finish 
+        FROM jobs
+        WHERE user_id = $1
+        ORDER BY ${orderBycolumn}`, 
+        [req.session.orderByUser])).rows;
+        let show = false;
+        let users;
+        if (req.session.username == 'admin') {
+            show = true
+            users = (await db.query('SELECT user_id, user_name FROM users')).rows
+        }
         res.render('index', {
             title: 'Jobs-Done',
             username: req.session.username,
-            table: table
+            table: table,
+            show: show,
+            users: users,
+            orderByUser: req.session.orderByUser,
+            order: req.session.order,
         })
+
     } else {
         res.redirect('/login');
     }
@@ -54,8 +50,8 @@ router.post('/login', async (req, res) => {
     if (user) {
         req.session.userID = user.user_id;
         req.session.username = user.user_name;
-        req.session.orderByUser = user.user_name;
-        req.session.order = 'job_name';
+        req.session.orderByUser = user.user_id;
+        req.session.order = 0;
         res.redirect('/');
     } else {
         res.render('login', {show: true});   
@@ -105,13 +101,9 @@ router.post('/changePassword', async (req, res) => {
     }
 })
 
-router.get('/order-by/:order', (req, res) => {
-    req.session.order = req.params.order;
-    res.redirect('/')
-})
-
-router.get('/user/:user', (req, res) => {
-    req.session.orderByUser = req.params.user;
+router.post('/sort', async (req, res) => {
+    req.session.order = req.body.select_order;
+    req.session.orderByUser = req.body.select_user;
     res.redirect('/')
 })
 
@@ -119,4 +111,5 @@ async function isTaken(username) {
     let user = await (await db.query('SELECT user_name FROM users WHERE user_name = $1', [username])).rows[0]; 
     return user ? true : false
 }
+
 export default router;
