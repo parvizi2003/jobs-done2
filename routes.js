@@ -103,7 +103,9 @@ router.post('/changePassword', async (req, res) => {
 
 router.post('/sort', async (req, res) => {
     req.session.order = req.body.select_order;
-    req.session.orderByUser = req.body.select_user;
+    if (req.session.username == 'admin') {
+        req.session.orderByUser = req.body.select_user;
+    }
     res.redirect('/')
 })
 
