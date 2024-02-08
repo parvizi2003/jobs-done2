@@ -1,14 +1,14 @@
-import { Router } from "express";
-import  db from './db.js';
+const Router = require("express");
+const  db = require('../db/db');
 
 const router = new Router();
 
 router.get('/', async (req, res) => {
     if (req.session.userID) {
-        let orderBycolumn = ['job_name', 'done_date', 'time_to_finish'][req.session.order]
+        let orderBycolumn = ['name', 'date', 'time'][req.session.order];
         let table = (await db.query(`
-        SELECT job_name, done_date, time_to_finish 
-        FROM jobs
+        SELECT name, date, time 
+        FROM "Jobs"
         WHERE user_id = $1
         ORDER BY ${orderBycolumn}`, 
         [req.session.orderByUser])).rows;
@@ -16,10 +16,10 @@ router.get('/', async (req, res) => {
         let users;
         if (req.session.username == 'admin') {
             show = true
-            users = (await db.query('SELECT user_id, user_name FROM users')).rows
+            users = (await db.query('SELECT id, name FROM "Users"')).rows
         }
         res.render('index', {
-            title: 'Jobs-Done',
+            title: 'jobs-Done',
             username: req.session.username,
             table: table,
             show: show,
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     await db.query(`
-    INSERT INTO jobs (user_id, job_name, done_date, time_to_finish) 
+    INSERT INTO "Jobs" (user_id, name, date, time) 
     VALUES ($1, $2, $3, $4) RETURNING *`,
     [req.session.userID, req.body.job_name, req.body.done_date, req.body.time_to_finish])
     res.redirect('/')
@@ -46,11 +46,11 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    let user = (await db.query('SELECT * FROM users WHERE user_name = $1 AND user_password = $2', [req.body.username, req.body.password])).rows[0];
+    let user = (await db.query('SELECT * FROM "Users" WHERE name = $1 AND password = $2', [req.body.username, req.body.password])).rows[0];
     if (user) {
-        req.session.userID = user.user_id;
-        req.session.username = user.user_name;
-        req.session.orderByUser = user.user_id;
+        req.session.userID = user.id;
+        req.session.username = user.name;
+        req.session.orderByUser = user.id;
         req.session.order = 0;
         res.redirect('/');
     } else {
@@ -64,10 +64,12 @@ router.get('/registration', async (req, res) => {
 
 router.post('/registration', async (req, res) => {
     if (req.body.password1 == req.body.password2 && await isTaken(req.body.username) == false) {
-        await db.query('INSERT INTO users (user_name, user_password) VALUES ($1, $2) RETURNING *', [req.body.username, req.body.password1]);
-        let userID = (await db.query('SELECT user_id FROM users WHERE user_name = $1', [req.body.username])).rows[0].user_id;
+        await db.query('INSERT INTO "Users" (name, password) VALUES ($1, $2) RETURNING *', [req.body.username, req.body.password1]);
+        let userID = (await db.query('SELECT id FROM "Users" WHERE name = $1', [req.body.username])).rows[0].id;
         req.session.userID = userID;
         req.session.username = req.body.username;
+        req.session.orderByUser = userID;
+        req.session.order = 0;
         res.redirect('/');
         return
     } else {
@@ -92,7 +94,7 @@ router.get('/changePassword', (req, res) => {
 router.post('/changePassword', async (req, res) => {
     if (req.body.password1 == req.body.password2) {
         await db.query(
-            'UPDATE users SET user_password = $1 WHERE user_id = $2 RETURNING *', 
+            'UPDATE "Users" SET password = $1 WHERE id = $2 RETURNING *', 
             [req.body.password1, req.session.userID]
         )
             res.redirect('/');
@@ -110,8 +112,8 @@ router.post('/sort', async (req, res) => {
 })
 
 async function isTaken(username) {
-    let user = await (await db.query('SELECT user_name FROM users WHERE user_name = $1', [username])).rows[0]; 
+    let user = await (await db.query('SELECT name FROM "Users" WHERE name = $1', [username])).rows[0]; 
     return user ? true : false
 }
 
-export default router;
+module.exports = router;

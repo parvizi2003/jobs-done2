@@ -1,11 +1,11 @@
-import PG from "pg";
+const PG = require("pg");
 
 const pool = new PG.Pool({
     user: 'postgres',
     password: 'qwerty',
     host: 'localhost',
     port: 5432,
-    database: 'jobs-done'
+    database: "jobs-done_development"
 });
 
-export default pool;
+module.exports = pool;

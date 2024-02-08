@@ -1,8 +1,9 @@
-import express from 'express';
-import exphbs from 'express-handlebars';
-import expressSession from 'express-session';
-import router from './routes.js';
-import path from 'path'
+const express = require('express')
+const exphbs = require('express-handlebars')
+const expressSession = require('express-session')
+const router = require('./server/routes/routes.js')
+const path = require('path')
+
 
 const PORT = process.env.PORT || 8080;
 const secret = 'qwerty';
@@ -12,7 +13,7 @@ const hbs = exphbs.create({
 });
 const app = express();
 
-app.use(express.static(path.resolve(path.resolve(), 'public')));
+app.use(express.static(path.resolve('server', 'public')));
 app.use(expressSession({
     secret: secret,
     resave: false,

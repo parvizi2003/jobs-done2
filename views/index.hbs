@@ -26,7 +26,7 @@
                         {{#if show}}
                             <select name="select_user" id="select_user" class="table_select">
                                 {{#each users}}
-                                    <option value="{{user_id}}">{{user_name}}</option>
+                                    <option value="{{id}}">{{name}}</option>
                                 {{/each}}
                             </select>
                         {{/if}}
@@ -64,20 +64,25 @@
 
 <script src="index.js"></script>
 <script>
-    let selectUser = document.querySelector('#select_user');
+    {{#if show}}
+        let selectUser = document.querySelector('#select_user');
+        let userOps = selectUser.querySelectorAll('option');
+        for (let op of userOps) {
+            if(op.value == {{orderByUser}}) {
+                op.selected = true
+            }
+        }
+    {{/if}}
+
     let selectOrder = document.querySelector('#select_order');
 
-    let userOps = selectUser.querySelectorAll('option');
     let orderOps = selectOrder.querySelectorAll('option');
 
-    for (let op of userOps) {
-        if(op.value == {{orderByUser}}) {
-            op.selected = true
-        }
-    }
+    
 
     for (let op of orderOps) {
         if(op.value == {{order}}) {
+            console.log(op)
             op.selected = true
         }
     }
